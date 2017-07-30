@@ -1,0 +1,29 @@
+{
+  "name": "forPurescript",
+  "description": "for pureScript",
+  "main": "index.js",
+  "authors": [
+    "lam"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "sketch",
+    "image",
+    "process"
+  ],
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "purescript-arrays": "^4.1.2",
+    "purescript-tailrec": "^3.3.0"
+  },
+  "devDependencies": {
+    "purescript-tailrec": "^3.3.0"
+  }
+}

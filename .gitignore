@@ -1,0 +1,8 @@
+
+# ignore node_modules
+/node_modules/
+# ignore bower_components
+/bower_components/
+
+# purejs output direct 
+/output/ 
