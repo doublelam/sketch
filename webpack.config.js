@@ -4,17 +4,18 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const htmlProcess = new HtmlWebpackPlugin({
   filename: 'index.html',
   template: './html/index.pug',
+  chunks: ['index'],
   hash: true,
 });
 const extractSass = new ExtractTextPlugin({
   filename: "[name].css",
 });
 module.exports = {
-  entry: ['./ts/App.ts'],
+  entry: { index: './ts/App.ts', img_calc: './ts/worker_threads/CalculateImgData.ts' },
   context: __dirname + '/src',
   output: {
     path: __dirname + '/dist',
-    filename: 'bundle.js'
+    filename: 'js/[name].js'
   },
   resolve: {
     extensions: ['.js', '.ts', '.tsx']
@@ -60,7 +61,7 @@ module.exports = {
       test: /\.s[a|c]{1}ss$/,
       use: extractSass.extract({
         fallback: 'style-loader',
-        use: 'css-loader!sass-loader'
+        use: 'css-loader!sass-loader',
       }),
     }]
   },

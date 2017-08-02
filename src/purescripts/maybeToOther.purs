@@ -3,6 +3,10 @@ module MabeConvert where
 import Data.Maybe
 -- import Data.Array
 
-maybeArr :: Maybe (Array Int) -> Array Int
+maybeArr :: forall a. Maybe (Array a) -> Array a
 maybeArr (Just a) = a
 maybeArr Nothing = []
+
+maybeInt :: Maybe Int -> Int
+maybeInt (Just a) = a
+maybeInt Nothing = 0

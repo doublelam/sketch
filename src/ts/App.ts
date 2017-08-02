@@ -1,28 +1,55 @@
-///<reference path="./d.tss/preLoad.d.ts"/>
-import { oCanvas } from '../ts/components/GetDom';
+///<reference path="d.tss/preLoad.d.ts"/>
+import {
+  canvasRaw,
+  rawContxt,
+  canvasReDraw,
+  redrawContxt
+} from '../ts/components/GetDom';
 import { getPixelsFromCanvas } from './components/getPixelsFromCanvas';
-import { reorderImageData } from './components/reorderImageData';
+import { $worker } from './utils/Worker';
+
 /* css resource */
 require('../sass/index.sass');
 /* ----------- */
+
+/* require from purescript */
+
+/* ---------- */
+/* ---------------------------import------------------------------------ */
+
 export class Main {
-  static run() {
-    let canvatxt = oCanvas.getContext('2d');
+  run() {
     let img = new Image();
     img.onload = () => {
-      canvatxt.drawImage(img, 0, 0, 300, 300);
-      // console.log(reorderImageData(getPixelsFromCanvas(canvatxt, 0, 0, 300, 300).data));
+      this.redrawGrayImg(img, 20, 20, 50, 50)
     }
     img.src = require('../images/10-dithering-opt.jpg');
-    let xx: any = require('../purescripts/reorderImgArr.purs');
-    // let test: any = require('../purescripts/test.purs');
-    // let hs:any = require('../haskell/test.hs');
-    // console.log('xx', xx.reorderImgArr(getPixelsFromCanvas(canvatxt, 0, 0, 300, 300).data))
-    // console.log('test', test.test)
-    // console.log('hs',hs)
   };
+
+  redrawGrayImg(img: HTMLImageElement, fromX: number, fromY: number, width: number, height: number) {
+    rawContxt.drawImage(img, 0, 0, 100, 100);
+    const imageData = getPixelsFromCanvas(rawContxt, fromX, fromY, width, height);
+    console.log('img data', imageData)
+    const worker = $worker({
+      do: 'js/img_calc.js',
+      message: data => {
+        console.log('data', data.data);
+        const imgData = redrawContxt.createImageData(width, height);
+        data.data.map((v, i) => {
+          imgData.data[i] = v
+        })
+        redrawContxt.putImageData(imgData, fromX, fromY)
+      },
+      error: err => {
+        console.log('err', err)
+      }
+    });
+    worker.emit({ exeFunc: 'transformToGray', infoData: imageData.data });
+  }
+
 }
 
 
 
-Main.run()
+const main = new Main();
+main.run()
