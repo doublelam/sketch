@@ -1,0 +1,16 @@
+@import variables
+.btn
+  display: inline-block
+  padding: 5px 8px
+  background: $blue
+  border-radius: 3px
+  transition: all .2s
+  color: $dark-txt
+  user-select: none
+  box-shadow: $norm-shadow
+  &:hover
+    box-shadow: $hover-shadow
+    cursor: pointer
+  &:active
+    background: darken($blue, 10%)
+

@@ -1,10 +1,21 @@
 @import variables
 @import functions
-.canvas-container
-  background-color: gray(1)
-  color: gray(8)
+@import reset
+@import components
+.container
+  .canvas-container
+    background-color: gray(1)
+    color: gray(8) 
+    .each-container
+      padding: 10px
+      text-align: center
+    .btn-container
+      text-align: center
+      .input-label
+        display: inline-block
+    .canvas
+      background-color: gray(1)
 
-.canvas
-  background-color: gray(1)
+
 
 

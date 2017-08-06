@@ -1,11 +1,9 @@
 export const getPixelsFromCanvas = (
-  canvasContext: CanvasRenderingContext2D,
-  fromX: number,
-  fromY: number,
-  width: number,
-  height: number
+  ctx: CanvasRenderingContext2D,
+  fromX: number = 0,
+  fromY: number = 0,
 ) => {
-  const imgData = canvasContext.getImageData(fromX, fromY, width, height);
+  const imgData = ctx.getImageData(fromX, fromY, ctx.canvas.width, ctx.canvas.height);
   return imgData;
 }
 

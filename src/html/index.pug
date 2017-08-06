@@ -1,9 +1,18 @@
 html
   head
     //- link(src=require('../sass/index.sass'))
+    meta(name="viewport" content="width=device-width, initial-scale=1.0, initial-scale=1.0")
   body
-    div
-    div.canvas-container
-      canvas.canvas(id="canvas-raw" width="300" height="300")  
-      canvas.canvas(id="canvas-redraw" width="300" height="300")
-      canvas.canvas(id="canvas-final-draw" width="300" height="300")
+    div.container
+      div.canvas-container
+        div.each-container.canvas-raw-container
+          canvas.canvas#canvas-raw(width="300" height="300") 
+          div.btn-container
+            label.input-label(for="file-input" name="file-input")
+              input.file-input#file-input(type="file" accept="image/*" capture="camera" hidden) 
+              div.btn CHOOSE AN IMAGE
+        //- canvas.canvas(id="canvas-redraw" width="300" height="300")
+        div.each-container.canvas-final-container
+          canvas.canvas#canvas-final-draw(width="300" height="300")
+          div.btn-container
+            div.btn#sketch-confirm START SKETCH

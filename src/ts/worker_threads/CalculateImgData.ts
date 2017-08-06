@@ -1,22 +1,33 @@
+import { transformToGray, resetIntArray, relayoutArr } from '../utils/processArray';
+import { logBlue, logGreen, logRed } from '../utils/consolelog';
+import { generateExecutive } from '../components/generateExecutive';
 const _self: any = self;
 _self.location.reload = val => { console.log('worker reload') }
 /* from purescript */
-const reorderArr: any = require('../../purescripts/reorderImgArr.purs');
+// const reorderArr: any = require('../../purescripts/reorderImgArr.purs');
 // const mathPure:any = require('../../purescripts/utils/mathematics.purs');
 /* from purescript */
 class WorkerProcess {
   constructor() {
-    console.log('___worker constructor___');
+    logBlue('NEW THREAD:worker constructor');
   }
 
-  reorderImgArr(data: Int8Array) {
+  reorderImgArr(data: Uint8Array) {
     // return reorderArr.reorderImgArr(data);
   }
 
-  transformToGray(data: Int8Array): Int8Array {
-    return reorderArr.transformToGray(data);
-    // console.log('mathpure',mathPure.closest(53)([22,34,56,67,9879,54]))
-    // return mathPure.closest(30)([22,34,56,67,9879,54])
+  transformToGray(
+    data: Uint8Array,
+    width: number = 300,
+    gap: number = 5,
+    rangeArr: number[] = [0, 85, 177, 255]
+  ): any {
+    const rsult = relayoutArr(data, width, gap, Uint8Array.from(rangeArr));
+    const _output_rslt = {
+      data: rsult,
+      exeCom: generateExecutive(rsult.conjArray,gap,width)
+    }
+    return _output_rslt;
   }
 }
 
@@ -25,6 +36,6 @@ const workerProcess = new WorkerProcess();
 _self.onmessage = data => {
   const exeName = data.data.exeFunc;
   const infoData = data.data.infoData;
-  const newdData: Int8Array[] = workerProcess[exeName](infoData);
+  const newdData: Uint8Array[] = workerProcess[exeName](...infoData);
   _self.postMessage(newdData);
 }
