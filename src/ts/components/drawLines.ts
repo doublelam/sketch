@@ -1,5 +1,5 @@
 import { logBlue, logGreen, logRed } from '../utils/consolelog';
-export type Action = 'DRAW' | 'MOVE' | 'LINE_FEED'
+export type Action = 'DRAW' | 'MOVE' | 'LINE_FEED' | 'ORIGIN'
 
 export type DrawExe = {
   action: Action,
@@ -28,10 +28,10 @@ export const drawLines = (
   ctx: CanvasRenderingContext2D,
   opts: DrawExe[],
   linStyle: LineStyle = {
-    width: 1,
+    width: .5,
     color: '#000'
   },
-  initPosition: [number, number] = [0, 0]
+  initPosition: [number, number] = [.5, .5]
 ): CanvasRenderingContext2D => {
   let timeoutTick: number;
   let _point: [number, number] = [initPosition[0], initPosition[1]];
@@ -41,8 +41,16 @@ export const drawLines = (
   clearTimeout(timeoutTick);
   ctx.beginPath();
   ctx.moveTo(_point[0], _point[1]);
-  const loopExe = (val: DrawExe) => {
+  const loopExe = (val: DrawExe, i) => {
     clearTimeout(timeoutTick);
+    if (val.action === 'ORIGIN') {
+      logBlue('origin');
+      ctx.moveTo(initPosition[0], initPosition[1]);
+      _point = [initPosition[0], initPosition[1]];
+      ctx.stroke();
+      ctx.closePath();
+      return;
+    }
     _point = [
       _point[0] + DIR_MAP[val.direct][0] * val.distance,
       _point[1] + DIR_MAP[val.direct][1] * val.distance
@@ -52,11 +60,11 @@ export const drawLines = (
     let yAxis = _point[1];
     ctx[command](xAxis, yAxis);
     ctx.stroke();
-    ctx.closePath()
+    ctx.closePath();
   }
   const timeout = (i: number, val: DrawExe) => {
     timeoutTick = setTimeout(() => {
-      loopExe(opts[i])
+      loopExe(opts[i], i)
     }, i * 10);
   }
   for (let i in opts) {

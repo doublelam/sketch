@@ -6,9 +6,21 @@ export const drawCanvas = (ctx: CanvasRenderingContext2D, imgBase64: string) => 
   const img = new Image();
   img.onload = (e: Event) => {
     console.log('width', img.naturalWidth, 'height', img.naturalHeight)
-    ctx.canvas.width = img.naturalWidth;
-    ctx.canvas.height = img.naturalHeight;
-    ctx.drawImage(img, 0, 0)
+    let width: number = img.naturalWidth;;
+    let height: number = img.naturalHeight;
+    if (width >= height && img.naturalWidth > 320) {
+      logBlue('width >= height && img.naturalWidth')
+      width = 320;
+      height = (320 / img.naturalWidth) * img.naturalHeight
+    };
+    if (width < height && img.naturalHeight > 320) {
+      logBlue('width < height && img.naturalWidth')
+      height = 320;
+      width = (320 / img.naturalHeight) * img.naturalWidth
+    };
+    ctx.canvas.width = width;
+    ctx.canvas.height = height;
+    ctx.drawImage(img, 0, 0, width, height)
   }
   img.src = imgBase64;
 }
@@ -20,6 +32,8 @@ export const sketchPics = (
   let worker: Worker_;
   let width = rawCtx.canvas.width;
   let height = rawCtx.canvas.height;
+  newCtx.canvas.width = width;
+  newCtx.canvas.height = height;
   let rawImgData = getPixelsFromCanvas(rawCtx);
   console.log('sketch imgdata', rawImgData);
   newCtx.clearRect(0, 0, newCtx.canvas.width, newCtx.canvas.height);
@@ -30,7 +44,11 @@ export const sketchPics = (
     do: 'js/img_calc.js',
     message: (data: ServiceWorkerMessageEvent) => {
       console.log('get worker message', data.data);
-      drawLines(newCtx, data.data.exeCom);
+      let newExe = data.data.exeCom.reverse().map(val => val.concat([{
+        action: "ORIGIN", distance: 0, direct: "UP"
+      }])).reduce((a, b) => a.concat(b))
+      console.log('new exe', newExe)
+      drawLines(newCtx, newExe);
     },
     error: err => {
       logRed('worker thread error:', err)
@@ -38,7 +56,6 @@ export const sketchPics = (
   });
   worker.emit({
     exeFunc: 'transformToGray',
-    infoData: [rawImgData.data, rawImgData.width, 3, [0, 85, 177, 255]]
+    infoData: [rawImgData.data, rawImgData.width, [2,4], [0, 85, 177, 255]]
   });
-
 }

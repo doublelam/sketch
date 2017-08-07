@@ -1,4 +1,4 @@
-import { transformToGray, resetIntArray, relayoutArr } from '../utils/processArray';
+import { transformToGray, resetIntArray, relayoutArr,getPixelsSeries } from '../utils/processArray';
 import { logBlue, logGreen, logRed } from '../utils/consolelog';
 import { generateExecutive } from '../components/generateExecutive';
 const _self: any = self;
@@ -19,13 +19,13 @@ class WorkerProcess {
   transformToGray(
     data: Uint8Array,
     width: number = 300,
-    gap: number = 5,
+    gaps: number[] = [3,5,7,9],
     rangeArr: number[] = [0, 85, 177, 255]
   ): any {
-    const rsult = relayoutArr(data, width, gap, Uint8Array.from(rangeArr));
+    const rsult = getPixelsSeries(data, width, gaps, Uint8Array.from(rangeArr));
     const _output_rslt = {
       data: rsult,
-      exeCom: generateExecutive(rsult.conjArray,gap,width)
+      exeCom: rsult.map((val,i) => generateExecutive(val.conjArray,gaps[i],width,rangeArr[i]))
     }
     return _output_rslt;
   }

@@ -14,6 +14,7 @@ import { Events } from './components/Events';
 import { drawCanvas } from './components/domOperate';
 /* css resource */
 require('../sass/index.sass');
+require('font-awesome/scss/font-awesome.scss');
 /* ----------- */
 
 /* require from purescript */

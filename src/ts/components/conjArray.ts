@@ -8,7 +8,8 @@ export const conjArray = (UintArr: Uint8Array, width: number): ExeCon[] => {
   let num = 0;
   let _objArr: ExeCon[] = [];
   for (let i in UintArr) {
-    if (UintArr[i] === _tempNum) {
+    let _i = Number(i);
+    if (UintArr[_i] === _tempNum) {
       num++
     } else {
       _objArr.push({
@@ -16,22 +17,22 @@ export const conjArray = (UintArr: Uint8Array, width: number): ExeCon[] => {
         gray: _tempNum,
         count: num || 1
       })
-      _tempNum = UintArr[i];
+      _tempNum = UintArr[_i];
       num = 1;
     }
-    if (Number(i) && Number(i) % width === 0) {
+    if (_i + 1 && (_i + 1) % width === 0) {
       _objArr.push({
         lineFeed: false,
         gray: _tempNum,
         count: num || 1
       });
-      num = 0;
-      _tempNum = UintArr[i]
       _objArr.push({
         lineFeed: true,
         gray: 0,
         count: 0
       })
+      num = 0;
+      _tempNum = UintArr[_i + 1]
     }
   }
   return _objArr;

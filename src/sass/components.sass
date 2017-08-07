@@ -1,13 +1,23 @@
 @import variables
 .btn
   display: inline-block
-  padding: 5px 8px
+  padding: 5rem 8rem
   background: $blue
-  border-radius: 3px
+  border-radius: 3rem
   transition: all .2s
   color: $dark-txt
   user-select: none
   box-shadow: $norm-shadow
+  &.circle
+    display: inline-block
+    border-radius: 13rem
+    padding: 0 5rem
+    min-width: 26rem
+    line-height: 26rem
+    height: 26rem
+    text-align: center
+    vertical-align: middle
+
   &:hover
     box-shadow: $hover-shadow
     cursor: pointer

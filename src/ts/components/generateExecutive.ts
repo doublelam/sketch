@@ -1,8 +1,13 @@
 import { DrawExe } from './drawLines';
 import { ExeCon } from './conjArray';
 import { Action } from './drawLines';
-export const generateExecutive = (exeArr: ExeCon[], gap: number, width: number) => {
-  console.log('_eidth', exeArr)
+export const generateExecutive = (
+  exeArr: ExeCon[],
+  gap: number,
+  width: number,
+  grayMatch: number = 85,
+  fillChar: string = "-"
+) => {
   let _exe: DrawExe[] = [];
   let _out_str = '';
   for (let val of exeArr) {
@@ -22,9 +27,9 @@ export const generateExecutive = (exeArr: ExeCon[], gap: number, width: number) 
     }
 
     let act: Action;
-    if (val.gray <= 85) {
+    if (val.gray <= grayMatch) {
       act = 'DRAW';
-      _out_str += (<any>'H').repeat(val.count);
+      _out_str += (<any>fillChar).repeat(val.count);
     } else {
       act = 'MOVE';
       _out_str += (<any>' ').repeat(val.count);

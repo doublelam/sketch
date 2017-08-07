@@ -7,7 +7,7 @@ export const logColors = (msg: string, color: string, ...args) => {
 
 export const logRed = (msg: any, ...args) => logColors(msg, '#CE594B', ...args);
 
-export const logGreen = (msg: any, ...args) => logColors(msg, '#4C9F67');
-export const logBlue = (msg: any, ...args) => logColors(msg, '#588CEE');
+export const logGreen = (msg: any, ...args) => logColors(msg, '#4C9F67', ...args);
+export const logBlue = (msg: any, ...args) => logColors(msg, '#588CEE', ...args);
 
 

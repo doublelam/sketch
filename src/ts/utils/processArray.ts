@@ -1,5 +1,9 @@
 import { conjArray } from '../components/conjArray';
-
+type PixelSerie = {
+  UintArray: Uint8Array,
+  pixelPoints: Uint8Array,
+  conjArray: any[]
+}
 export const transformToGray = (arr: Uint8Array) => {
   let _arr: Uint8Array = arr;
   for (let i = 0; i <= arr.length - 4; i += 4) {
@@ -22,11 +26,17 @@ export const closest = (n: number, arr: Uint8Array): number => {
   return _ele;
 }
 
-export const relayoutArr = (arr: Uint8Array, width: number, gap: number, rangeArr: Uint8Array): {
-  UintArray: Uint8Array,
-  pixelPoints: Uint8Array,
-  conjArray: any[]
-} => {
+export const getPixelsSeries = (
+  arr: Uint8Array,
+  width: number,
+  gaps: number[],
+  rangeArr: Uint8Array
+): PixelSerie[] => {
+  return gaps.map(val => relayoutArr(arr,
+    width, val, rangeArr))
+}
+
+export const relayoutArr = (arr: Uint8Array, width: number, gap: number, rangeArr: Uint8Array): PixelSerie => {
   let _arr: number[] = [];
   let _pixels: number[] = [];
   for (let i = 0; i < arr.length; i += width * 4 * gap) {
