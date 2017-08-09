@@ -12,7 +12,7 @@ class StyleConfig {
     width: 1,
     matchLevels: [3, 6, 12],
     pixelRange: [0, 85, 170, 255],
-    velocity: 1.89
+    velocity: 5
   }
   constructor() {
     this.lineWidth = this.initConfig.width;
