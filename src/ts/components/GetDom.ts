@@ -40,4 +40,3 @@ export const rangeDot: HTMLElement = <HTMLElement>getEle('#dot-range');
 
 export const velocitySetInput: HTMLInputElement = <HTMLInputElement>getEle('#velocity-set-input');
 export const velocityDot: HTMLElement = <HTMLElement>getEle('#dot-velocity');
-

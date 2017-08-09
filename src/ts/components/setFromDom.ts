@@ -40,14 +40,14 @@ export class SetStyleFromDom {
   }
   setWidth() {
     const widthSetter = new InputSet(widthSetInput);
-    widthDot.style.fontSize = styleConfig.getWidth() + 10 + 'rem';
+    widthDot.style.fontSize = styleConfig.getWidth() / 10 + 1 + 'rem';
     let initWidth = styleConfig.getWidth('init');
     widthSetInput.oninput = (e: Event) => {
       let val = (<any>e).target.value;
       if (val === '') {
         widthSetter.normal();
         styleConfig.setWidth(String(initWidth));
-        widthDot.style.fontSize = styleConfig.getWidth() + 10 + 'rem';
+        widthDot.style.fontSize = styleConfig.getWidth() / 10 + 1 + 'rem';
         return;
       }
       if (!RegExpr.ifNumber(val) || Number(val) > 9 || Number(val) <= 0) {
@@ -55,7 +55,7 @@ export class SetStyleFromDom {
         return;
       }
       styleConfig.setWidth(val);
-      widthDot.style.fontSize = styleConfig.getWidth() + 10 + 'rem';
+      widthDot.style.fontSize = styleConfig.getWidth() / 10 + 1 + 'rem';
       widthSetter.success();
       return;
     }

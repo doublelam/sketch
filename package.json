@@ -4,7 +4,7 @@
   "description": "a project for processing image pixels",
   "main": "index.js",
   "scripts": {
-    "run": "webpack-dev-server",
+    "run": "webpack-dev-server --host 0.0.0.0 --disableHostCheck",
     "build": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean:dist": "rimraf dist"

@@ -593,14 +593,14 @@ var SetStyleFromDom = (function () {
     };
     SetStyleFromDom.prototype.setWidth = function () {
         var widthSetter = new inputWarn_1.InputSet(GetDom_1.widthSetInput);
-        GetDom_1.widthDot.style.fontSize = styleConfig_1.styleConfig.getWidth() + 10 + 'rem';
+        GetDom_1.widthDot.style.fontSize = styleConfig_1.styleConfig.getWidth() / 10 + 1 + 'rem';
         var initWidth = styleConfig_1.styleConfig.getWidth('init');
         GetDom_1.widthSetInput.oninput = function (e) {
             var val = e.target.value;
             if (val === '') {
                 widthSetter.normal();
                 styleConfig_1.styleConfig.setWidth(String(initWidth));
-                GetDom_1.widthDot.style.fontSize = styleConfig_1.styleConfig.getWidth() + 10 + 'rem';
+                GetDom_1.widthDot.style.fontSize = styleConfig_1.styleConfig.getWidth() / 10 + 1 + 'rem';
                 return;
             }
             if (!regExpMatch_1.RegExpr.ifNumber(val) || Number(val) > 9 || Number(val) <= 0) {
@@ -608,7 +608,7 @@ var SetStyleFromDom = (function () {
                 return;
             }
             styleConfig_1.styleConfig.setWidth(val);
-            GetDom_1.widthDot.style.fontSize = styleConfig_1.styleConfig.getWidth() + 10 + 'rem';
+            GetDom_1.widthDot.style.fontSize = styleConfig_1.styleConfig.getWidth() / 10 + 1 + 'rem';
             widthSetter.success();
             return;
         };

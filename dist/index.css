@@ -1,33 +1,36 @@
 *,
 * ::before,
 * ::after {
-  box-sizing: border-box; }
+  box-sizing: border-box;
+  text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  -ms-text-size-adjust: none; }
 
 html {
-  font-size: .3125vw; }
+  font-size: 3.125vw; }
 
 body {
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 14rem;
+  font-size: 1.4rem;
   padding: 0;
   margin: 0; }
 
 .btn {
   display: inline-block;
-  padding: 5rem 8rem;
+  padding: .5rem .8rem;
   background: #588cee;
-  border-radius: 3rem;
+  border-radius: .3rem;
   transition: all .2s;
   color: #e6e6e6;
   user-select: none;
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); }
   .btn.circle {
     display: inline-block;
-    border-radius: 13rem;
-    padding: 0 5rem;
-    min-width: 26rem;
-    line-height: 26rem;
-    height: 26rem;
+    border-radius: 1.3rem;
+    padding: 0 .5rem;
+    min-width: 2.6rem;
+    line-height: 2.6rem;
+    height: 2.6rem;
     text-align: center;
     vertical-align: middle; }
   .btn:hover {
@@ -41,19 +44,19 @@ body {
   position: absolute;
   right: 0;
   bottom: 0;
-  width: 180rem;
-  padding: 8rem 10rem;
-  border-radius: 3rem;
-  border-bottom-right-radius: 13rem;
+  width: 18rem;
+  padding: .8rem 1rem;
+  border-radius: .3rem;
+  border-bottom-right-radius: 1.3rem;
   z-index: 0;
   box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.4); }
 
 .ipt {
-  border: 1rem solid #b3b3b3;
+  border: 0.1rem solid #b3b3b3;
   transition: all .2s;
-  border-radius: 3rem;
-  padding: 5rem;
-  font-size: 14rem;
+  border-radius: .3rem;
+  padding: .5rem;
+  font-size: 1.4rem;
   color: #333333;
   outline: none; }
   .ipt:hover {
@@ -63,7 +66,7 @@ body {
   background-color: #e6e6e6;
   color: #333333; }
   .container .canvas-container .each-container {
-    padding: 10px;
+    padding: 1rem;
     text-align: center; }
   .container .canvas-container .btn-container {
     text-align: center; }
@@ -71,7 +74,7 @@ body {
       display: inline-block;
       position: relative; }
       .container .canvas-container .btn-container .btns-con .btn.circle {
-        margin-left: 3rem;
+        margin-left: .3rem;
         z-index: 1;
         position: relative; }
         .container .canvas-container .btn-container .btns-con .btn.circle + .modal {
@@ -93,12 +96,12 @@ body {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding: 3rem 5rem; }
+  padding: .3rem .5rem; }
   .set-label.velocity-set #dot-velocity {
     animation: velocityRotate 1s linear infinite; }
   .set-label .ipt {
-    margin-left: 5rem;
-    width: 120rem; }
+    margin-left: .5rem;
+    width: 12rem; }
 
 @keyframes velocityRotate {
   from {
