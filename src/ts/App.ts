@@ -26,39 +26,10 @@ export class Main {
   run() {
     Events.fileInputEve((e: Event) => {
       drawCanvas(rawContxt,(<any>e).target.result)
-    })
-    Events.sketchStartEve(rawContxt, finalContxt)
-    // let img = new Image();
-    // img.onload = () => {
-    //   this.redrawGrayImg(img, 0, 0, 300, 300)
-    // }
-    // img.src = require('../images/10-dithering-opt.jpg');
+    });
+    Events.sketchStartEve(rawContxt, finalContxt);
+    Events.fromOutside();
   };
-
-  redrawGrayImg(img: HTMLImageElement, fromX: number, fromY: number, width: number, height: number) {
-    rawContxt.drawImage(img, fromX, fromY, width, height);
-    const imageData = getPixelsFromCanvas(rawContxt, fromX, fromY);
-    console.log('img data', imageData)
-    // const worker = $worker({
-    //   do: 'js/img_calc.js',
-    //   message: data => {
-    //     console.log('data', data.data);
-    //     const imgData = rawContxt.createImageData(width, height);
-    //     data.data.UintArray.map((v, i) => {
-    //       imgData.data[i] = v
-    //     })
-    //     // redrawContxt.putImageData(imgData, fromX, fromY)
-    //     console.log('pixePoints', data.data.pixelPoints);
-    //     // drawLines(finalContxt, generateExecutive(data.data.conjArray, 3, width))
-    //   },
-    //   error: err => {
-    //     console.log('err', err)
-    //   }
-    // });
-    // worker.emit({ exeFunc: 'transformToGray', infoData: imageData.data });
-
-  }
-
 }
 
 

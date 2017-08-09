@@ -2,6 +2,8 @@ import { fileInput, sketchBtn } from './GetDom';
 import { getPixelsFromCanvas } from './getPixelsFromCanvas';
 import { $worker } from '../utils/Worker';
 import { sketchPics } from '../components/domOperate';
+import { setStyleFromDom } from './setFromDom';
+import { styleConfig } from './styleConfig';
 export class Events {
   static fileInputEve(callback: Function = (e) => {
     console.log('%cINITIAL FILE ONCHANGE CALLBACK', 'color: blue')
@@ -25,7 +27,18 @@ export class Events {
     sketchCtx: CanvasRenderingContext2D = rawCtx
   ) {
     sketchBtn.onclick = (e: Event) => {
-      sketchPics(rawCtx, sketchCtx);
+      let width: number = styleConfig.getWidth();
+      let color: string = styleConfig.getColor();
+      let levels: number[] = styleConfig.getLevels();
+      let range: number[] = styleConfig.getRange();
+      let velocity: number = styleConfig.getVelocity();
+      sketchPics(rawCtx, sketchCtx, width, color, levels, range, velocity);
     }
   }
+
+  static fromOutside() {
+    setStyleFromDom.run();
+  }
+
+
 }

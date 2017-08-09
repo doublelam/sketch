@@ -31,7 +31,8 @@ export const drawLines = (
     width: .5,
     color: '#000'
   },
-  initPosition: [number, number] = [.5, .5]
+  initPosition: [number, number] = [.5, .5],
+  velocity: number = 1.89
 ): CanvasRenderingContext2D => {
   let timeoutTick: number;
   let _point: [number, number] = [initPosition[0], initPosition[1]];
@@ -62,10 +63,11 @@ export const drawLines = (
     ctx.stroke();
     ctx.closePath();
   }
+  let speed: number = 1000 / (velocity * 111 - 110);
   const timeout = (i: number, val: DrawExe) => {
     timeoutTick = setTimeout(() => {
       loopExe(opts[i], i)
-    }, i * 10);
+    }, i * speed);
   }
   for (let i in opts) {
     timeout(Number(i), opts[i])

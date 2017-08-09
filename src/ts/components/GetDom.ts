@@ -26,3 +26,18 @@ export const finalContxt: CanvasRenderingContext2D = canvasFinal.getContext('2d'
 export const fileInput: HTMLInputElement = <HTMLInputElement>getEle('#file-input');
 export const sketchBtn: HTMLDivElement = <HTMLDivElement>getEle('#sketch-confirm');
 
+export const colorSetInput: HTMLInputElement = <HTMLInputElement>getEle('#color-set-input');
+export const colorDot: HTMLElement = <HTMLElement>getEle('#dot-color');
+
+export const widthSetInput: HTMLInputElement = <HTMLInputElement>getEle('#width-set-input');
+export const widthDot: HTMLElement = <HTMLElement>getEle('#dot-width');
+
+export const levelsSetInput: HTMLInputElement = <HTMLInputElement>getEle('#levels-set-input');
+export const levelsDot: HTMLElement = <HTMLElement>getEle('#dot-levels');
+
+export const rangeSetInput: HTMLInputElement = <HTMLInputElement>getEle('#range-set-input');
+export const rangeDot: HTMLElement = <HTMLElement>getEle('#dot-range');
+
+export const velocitySetInput: HTMLInputElement = <HTMLInputElement>getEle('#velocity-set-input');
+export const velocityDot: HTMLElement = <HTMLElement>getEle('#dot-velocity');
+

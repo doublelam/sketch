@@ -11,13 +11,45 @@
       text-align: center
     .btn-container
       text-align: center
-      .btn.circle
-        margin-left: 3rem
+      .btns-con
+        display: inline-block
+        position: relative
+        .btn.circle
+          margin-left: 3rem
+          z-index: 1
+          position: relative
+          &+.modal
+            transition: all .2s
+            visibility: hidden
+            opacity: 0
+            &:hover
+              visibility: visible
+              opacity: 1
+          &:hover
+            &+.modal
+              visibility: visible
+              opacity: 1
       .input-label
         display: inline-block
     .canvas
       background-color: gray(0)
 
+.set-label
+  display: flex
+  align-items: center
+  justify-content: flex-end
+  padding: 3rem 5rem
+  &.velocity-set
+    #dot-velocity
+      animation: velocityRotate 1s linear infinite
+  .input-pretext
+  .ipt
+    margin-left: 5rem
+    width: 120rem
 
 
-
+@keyframes velocityRotate
+  from
+    transform: rotate(0deg)
+  to
+    transform: rotate(360deg)

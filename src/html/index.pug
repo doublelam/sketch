@@ -15,6 +15,28 @@ html
         div.each-container.canvas-final-container
           canvas.canvas#canvas-final-draw(width="300" height="200")
           div.btn-container
-            div.btn#sketch-confirm START SKETCH
-            div.btn.circle#set-up 
-              i.fa.fa-cog
+            div.btns-con
+              div.btn#sketch-confirm START SKETCHING
+              div.btn.circle#set-up 
+                i.fa.fa-cog
+              div.modal
+                label.set-label.color-set 
+                  span.input-pretext#dot-color
+                    i.fa.fa-eyedropper
+                  input.ipt#color-set-input(type="text" placeholder="#.. or rgba(..)")
+                label.set-label.width-set 
+                  span.input-pretext#dot-width
+                    i.fa.fa-pencil
+                  input.ipt#width-set-input(type="text" placeholder="Line width")
+                label.set-label.levels-set 
+                  span.input-pretext#dot-levels
+                    i.fa.fa-align-justify
+                  input.ipt#levels-set-input(type="text" placeholder="[2,4,8..]")
+                label.set-label.range-set 
+                  span.input-pretext#dot-range
+                    i.fa.fa-adjust
+                  input.ipt#range-set-input(type="text" placeholder="[0,85,170,255]")
+                label.set-label.velocity-set 
+                  span.input-pretext#dot-velocity
+                    i.fa.fa-superpowers
+                  input.ipt#velocity-set-input(type="text" placeholder="velocity: 1~10")

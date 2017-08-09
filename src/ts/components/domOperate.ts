@@ -28,6 +28,11 @@ export const drawCanvas = (ctx: CanvasRenderingContext2D, imgBase64: string) => 
 export const sketchPics = (
   rawCtx: CanvasRenderingContext2D,
   newCtx: CanvasRenderingContext2D,
+  lineWidth: number = 1,
+  lineColor: string = '#000',
+  levels: number[] = [2, 4],
+  range: number[] = [0, 85, 170, 255],
+  velocity: number = 1.89,
 ) => {
   let worker: Worker_;
   let width = rawCtx.canvas.width;
@@ -46,16 +51,17 @@ export const sketchPics = (
       console.log('get worker message', data.data);
       let newExe = data.data.exeCom.reverse().map(val => val.concat([{
         action: "ORIGIN", distance: 0, direct: "UP"
-      }])).reduce((a, b) => a.concat(b))
-      console.log('new exe', newExe)
-      drawLines(newCtx, newExe);
+      }])).reduce((a, b) => a.concat(b));
+      console.log('new exe', newExe);
+      drawLines(newCtx, newExe, { width: lineWidth, color: lineColor }, [.5, .5], velocity);
+      worker.end();
     },
     error: err => {
-      logRed('worker thread error:', err)
+      logRed('worker thread error:', err);
     }
   });
   worker.emit({
     exeFunc: 'transformToGray',
-    infoData: [rawImgData.data, rawImgData.width, [2,4], [0, 85, 177, 255]]
+    infoData: [rawImgData.data, rawImgData.width, levels, range]
   });
 }
