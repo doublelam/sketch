@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -133,6 +133,16 @@ exports.canvasFinal = exports.getEle('#canvas-final-draw');
 exports.finalContxt = exports.canvasFinal.getContext('2d');
 exports.fileInput = exports.getEle('#file-input');
 exports.sketchBtn = exports.getEle('#sketch-confirm');
+exports.colorSetInput = exports.getEle('#color-set-input');
+exports.colorDot = exports.getEle('#dot-color');
+exports.widthSetInput = exports.getEle('#width-set-input');
+exports.widthDot = exports.getEle('#dot-width');
+exports.levelsSetInput = exports.getEle('#levels-set-input');
+exports.levelsDot = exports.getEle('#dot-levels');
+exports.rangeSetInput = exports.getEle('#range-set-input');
+exports.rangeDot = exports.getEle('#dot-range');
+exports.velocitySetInput = exports.getEle('#velocity-set-input');
+exports.velocityDot = exports.getEle('#dot-velocity');
 
 
 /***/ }),
@@ -142,25 +152,10 @@ exports.sketchBtn = exports.getEle('#sketch-confirm');
 "use strict";
 
 exports.__esModule = true;
-exports.getPixelsFromCanvas = function (ctx, fromX, fromY) {
-    if (fromX === void 0) { fromX = 0; }
-    if (fromY === void 0) { fromY = 0; }
-    var imgData = ctx.getImageData(fromX, fromY, ctx.canvas.width, ctx.canvas.height);
-    return imgData;
-};
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-exports.__esModule = true;
-var getPixelsFromCanvas_1 = __webpack_require__(2);
-var Worker_1 = __webpack_require__(6);
+var getPixelsFromCanvas_1 = __webpack_require__(7);
+var Worker_1 = __webpack_require__(8);
 var consolelog_1 = __webpack_require__(0);
-var drawLines_1 = __webpack_require__(7);
+var drawLines_1 = __webpack_require__(9);
 exports.drawCanvas = function (ctx, imgBase64) {
     var img = new Image();
     img.onload = function (e) {
@@ -186,7 +181,12 @@ exports.drawCanvas = function (ctx, imgBase64) {
     };
     img.src = imgBase64;
 };
-exports.sketchPics = function (rawCtx, newCtx) {
+exports.sketchPics = function (rawCtx, newCtx, lineWidth, lineColor, levels, range, velocity) {
+    if (lineWidth === void 0) { lineWidth = 1; }
+    if (lineColor === void 0) { lineColor = '#000'; }
+    if (levels === void 0) { levels = [2, 4]; }
+    if (range === void 0) { range = [0, 85, 170, 255]; }
+    if (velocity === void 0) { velocity = 1.89; }
     var worker;
     var width = rawCtx.canvas.width;
     var height = rawCtx.canvas.height;
@@ -203,10 +203,11 @@ exports.sketchPics = function (rawCtx, newCtx) {
         message: function (data) {
             console.log('get worker message', data.data);
             var newExe = data.data.exeCom.reverse().map(function (val) { return val.concat([{
-                    action: "MOVE", distance: newCtx.canvas.height, direct: "UP"
+                    action: "ORIGIN", distance: 0, direct: "UP"
                 }]); }).reduce(function (a, b) { return a.concat(b); });
             console.log('new exe', newExe);
-            drawLines_1.drawLines(newCtx, newExe);
+            drawLines_1.drawLines(newCtx, newExe, { width: lineWidth, color: lineColor }, [.5, .5], velocity);
+            worker.end();
         },
         error: function (err) {
             consolelog_1.logRed('worker thread error:', err);
@@ -214,9 +215,102 @@ exports.sketchPics = function (rawCtx, newCtx) {
     });
     worker.emit({
         exeFunc: 'transformToGray',
-        infoData: [rawImgData.data, rawImgData.width, [3, 3], [0, 85, 177, 255]]
+        infoData: [rawImgData.data, rawImgData.width, levels, range]
     });
 };
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+exports.__esModule = true;
+var regExpMatch_1 = __webpack_require__(4);
+var consolelog_1 = __webpack_require__(0);
+var StyleConfig = (function () {
+    function StyleConfig() {
+        this.initConfig = {
+            color: '#000',
+            width: 1,
+            matchLevels: [3, 6, 12],
+            pixelRange: [0, 85, 170, 255],
+            velocity: 5
+        };
+        this.lineWidth = this.initConfig.width;
+        this.lineColor = this.initConfig.color;
+        this.matchLevels = this.initConfig.matchLevels.slice();
+        this.pixelRange = this.initConfig.pixelRange.slice();
+        this.velocity = this.initConfig.velocity;
+    }
+    StyleConfig.prototype.setColor = function (color) {
+        if (regExpMatch_1.RegExpr.ifColor(color)) {
+            this.lineColor = color;
+            return this;
+        }
+        consolelog_1.logRed('Invalid colour formatter');
+        return this;
+    };
+    StyleConfig.prototype.setWidth = function (width) {
+        if (regExpMatch_1.RegExpr.ifNumber(width)) {
+            this.lineWidth = Number(width);
+            return this;
+        }
+        consolelog_1.logRed('Invalid number formatter');
+    };
+    StyleConfig.prototype.setMatchLevels = function (levels) {
+        if (regExpMatch_1.RegExpr.ifNumberArray(levels)) {
+            try {
+                this.matchLevels = JSON.parse(levels);
+                return this;
+            }
+            catch (e) {
+                consolelog_1.logRed('JSONparse Error:', e);
+            }
+        }
+        consolelog_1.logRed('Invalid number array');
+        return this;
+    };
+    StyleConfig.prototype.setPixelRange = function (range) {
+        if (regExpMatch_1.RegExpr.ifNumberArray(range)) {
+            try {
+                this.pixelRange = JSON.parse(range);
+                return this;
+            }
+            catch (e) {
+                consolelog_1.logRed('JSONparse Error:', e);
+            }
+        }
+        consolelog_1.logRed('Invalid number array');
+        return this;
+    };
+    StyleConfig.prototype.setVelocity = function (velocity) {
+        if (regExpMatch_1.RegExpr.ifNumber(velocity)) {
+            this.velocity = Number(velocity);
+            return this;
+        }
+        consolelog_1.logRed('Invalid number');
+        return this;
+    };
+    StyleConfig.prototype.getColor = function (str) {
+        return str === 'init' ? this.initConfig.color : this.lineColor;
+    };
+    StyleConfig.prototype.getWidth = function (str) {
+        return str === 'init' ? this.initConfig.width : this.lineWidth;
+    };
+    StyleConfig.prototype.getLevels = function (str) {
+        return str === 'init' ? this.initConfig.matchLevels : this.matchLevels;
+    };
+    StyleConfig.prototype.getRange = function (str) {
+        return str === 'init' ? this.initConfig.pixelRange : this.pixelRange;
+    };
+    StyleConfig.prototype.getVelocity = function (str) {
+        return str === 'init' ? this.initConfig.velocity : this.velocity;
+    };
+    return StyleConfig;
+}());
+exports.styleConfig = new StyleConfig();
 
 
 /***/ }),
@@ -226,14 +320,37 @@ exports.sketchPics = function (rawCtx, newCtx) {
 "use strict";
 
 exports.__esModule = true;
+var RegExpr = (function () {
+    function RegExpr() {
+    }
+    RegExpr.ifColor = function (str) {
+        return /(^rgba\(((1|2(?![6-9]|[5][6-9]))?[0-9]?[0-9],){3}(\.+\d+|1)\)$)|(^#[0-9a-fA-F]{3}$)|(^#[0-9a-fA-F]{6}$)/g.test(str);
+    };
+    RegExpr.ifNumber = function (str) {
+        return /^(?!0\d+)([0-9]*\.?\d+)$/g.test(str);
+    };
+    RegExpr.ifNumberArray = function (str) {
+        return /^\[(\d*\.?\d+,)*\d*\.?\d+\]$/g.test(str);
+    };
+    return RegExpr;
+}());
+exports.RegExpr = RegExpr;
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+exports.__esModule = true;
 ///<reference path="d.tss/preLoad.d.ts"/>
 var GetDom_1 = __webpack_require__(1);
-var getPixelsFromCanvas_1 = __webpack_require__(2);
-var Events_1 = __webpack_require__(5);
-var domOperate_1 = __webpack_require__(3);
+var Events_1 = __webpack_require__(6);
+var domOperate_1 = __webpack_require__(2);
 /* css resource */
-__webpack_require__(8);
-__webpack_require__(9);
+__webpack_require__(12);
+__webpack_require__(13);
 /* ----------- */
 /* require from purescript */
 /* ---------- */
@@ -246,35 +363,9 @@ var Main = (function () {
             domOperate_1.drawCanvas(GetDom_1.rawContxt, e.target.result);
         });
         Events_1.Events.sketchStartEve(GetDom_1.rawContxt, GetDom_1.finalContxt);
-        // let img = new Image();
-        // img.onload = () => {
-        //   this.redrawGrayImg(img, 0, 0, 300, 300)
-        // }
-        // img.src = require('../images/10-dithering-opt.jpg');
+        Events_1.Events.fromOutside();
     };
     ;
-    Main.prototype.redrawGrayImg = function (img, fromX, fromY, width, height) {
-        GetDom_1.rawContxt.drawImage(img, fromX, fromY, width, height);
-        var imageData = getPixelsFromCanvas_1.getPixelsFromCanvas(GetDom_1.rawContxt, fromX, fromY);
-        console.log('img data', imageData);
-        // const worker = $worker({
-        //   do: 'js/img_calc.js',
-        //   message: data => {
-        //     console.log('data', data.data);
-        //     const imgData = rawContxt.createImageData(width, height);
-        //     data.data.UintArray.map((v, i) => {
-        //       imgData.data[i] = v
-        //     })
-        //     // redrawContxt.putImageData(imgData, fromX, fromY)
-        //     console.log('pixePoints', data.data.pixelPoints);
-        //     // drawLines(finalContxt, generateExecutive(data.data.conjArray, 3, width))
-        //   },
-        //   error: err => {
-        //     console.log('err', err)
-        //   }
-        // });
-        // worker.emit({ exeFunc: 'transformToGray', infoData: imageData.data });
-    };
     return Main;
 }());
 exports.Main = Main;
@@ -283,14 +374,16 @@ main.run();
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 exports.__esModule = true;
 var GetDom_1 = __webpack_require__(1);
-var domOperate_1 = __webpack_require__(3);
+var domOperate_1 = __webpack_require__(2);
+var setFromDom_1 = __webpack_require__(10);
+var styleConfig_1 = __webpack_require__(3);
 var Events = (function () {
     function Events() {
     }
@@ -314,8 +407,16 @@ var Events = (function () {
     Events.sketchStartEve = function (rawCtx, sketchCtx) {
         if (sketchCtx === void 0) { sketchCtx = rawCtx; }
         GetDom_1.sketchBtn.onclick = function (e) {
-            domOperate_1.sketchPics(rawCtx, sketchCtx);
+            var width = styleConfig_1.styleConfig.getWidth();
+            var color = styleConfig_1.styleConfig.getColor();
+            var levels = styleConfig_1.styleConfig.getLevels();
+            var range = styleConfig_1.styleConfig.getRange();
+            var velocity = styleConfig_1.styleConfig.getVelocity();
+            domOperate_1.sketchPics(rawCtx, sketchCtx, width, color, levels, range, velocity);
         };
+    };
+    Events.fromOutside = function () {
+        setFromDom_1.setStyleFromDom.run();
     };
     return Events;
 }());
@@ -323,7 +424,22 @@ exports.Events = Events;
 
 
 /***/ }),
-/* 6 */
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+exports.__esModule = true;
+exports.getPixelsFromCanvas = function (ctx, fromX, fromY) {
+    if (fromX === void 0) { fromX = 0; }
+    if (fromY === void 0) { fromY = 0; }
+    var imgData = ctx.getImageData(fromX, fromY, ctx.canvas.width, ctx.canvas.height);
+    return imgData;
+};
+
+
+/***/ }),
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -373,12 +489,13 @@ exports.$worker = function (opt) { return new Worker_(opt); };
 
 
 /***/ }),
-/* 7 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 exports.__esModule = true;
+var consolelog_1 = __webpack_require__(0);
 var DIR_MAP = {
     'LEFT': [-1, 0],
     'RIGHT': [1, 0],
@@ -389,12 +506,13 @@ var ACTION_MAP = {
     'DRAW': 'lineTo',
     'MOVE': 'moveTo'
 };
-exports.drawLines = function (ctx, opts, linStyle, initPosition) {
+exports.drawLines = function (ctx, opts, linStyle, initPosition, velocity) {
     if (linStyle === void 0) { linStyle = {
         width: .5,
         color: '#000'
     }; }
     if (initPosition === void 0) { initPosition = [.5, .5]; }
+    if (velocity === void 0) { velocity = 1.89; }
     var timeoutTick;
     var _point = [initPosition[0], initPosition[1]];
     console.log('init', _point);
@@ -405,6 +523,14 @@ exports.drawLines = function (ctx, opts, linStyle, initPosition) {
     ctx.moveTo(_point[0], _point[1]);
     var loopExe = function (val, i) {
         clearTimeout(timeoutTick);
+        if (val.action === 'ORIGIN') {
+            consolelog_1.logBlue('origin');
+            ctx.moveTo(initPosition[0], initPosition[1]);
+            _point = [initPosition[0], initPosition[1]];
+            ctx.stroke();
+            ctx.closePath();
+            return;
+        }
         _point = [
             _point[0] + DIR_MAP[val.direct][0] * val.distance,
             _point[1] + DIR_MAP[val.direct][1] * val.distance
@@ -413,14 +539,14 @@ exports.drawLines = function (ctx, opts, linStyle, initPosition) {
         var xAxis = _point[0];
         var yAxis = _point[1];
         ctx[command](xAxis, yAxis);
-        // logBlue(`${i}:${command},${xAxis},${yAxis}`)
         ctx.stroke();
         ctx.closePath();
     };
+    var speed = 1000 / (velocity * 111 - 110);
     var timeout = function (i, val) {
         timeoutTick = setTimeout(function () {
             loopExe(opts[i], i);
-        }, i * 10);
+        }, i * speed);
     };
     for (var i in opts) {
         timeout(Number(i), opts[i]);
@@ -430,13 +556,179 @@ exports.drawLines = function (ctx, opts, linStyle, initPosition) {
 
 
 /***/ }),
-/* 8 */
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+exports.__esModule = true;
+var GetDom_1 = __webpack_require__(1);
+var styleConfig_1 = __webpack_require__(3);
+var regExpMatch_1 = __webpack_require__(4);
+var inputWarn_1 = __webpack_require__(11);
+var SetStyleFromDom = (function () {
+    function SetStyleFromDom() {
+    }
+    SetStyleFromDom.prototype.setColor = function () {
+        var colorSetter = new inputWarn_1.InputSet(GetDom_1.colorSetInput);
+        GetDom_1.colorDot.style.color = styleConfig_1.styleConfig.getColor();
+        var initColor = styleConfig_1.styleConfig.getColor('init');
+        GetDom_1.colorSetInput.oninput = function (e) {
+            var val = e.target.value;
+            if (val === '') {
+                colorSetter.normal();
+                styleConfig_1.styleConfig.setColor(initColor);
+                GetDom_1.colorDot.style.color = styleConfig_1.styleConfig.getColor();
+                return;
+            }
+            if (!regExpMatch_1.RegExpr.ifColor(val)) {
+                colorSetter.warn();
+                return;
+            }
+            styleConfig_1.styleConfig.setColor(val);
+            GetDom_1.colorDot.style.color = styleConfig_1.styleConfig.getColor();
+            colorSetter.success();
+            return;
+        };
+    };
+    SetStyleFromDom.prototype.setWidth = function () {
+        var widthSetter = new inputWarn_1.InputSet(GetDom_1.widthSetInput);
+        GetDom_1.widthDot.style.fontSize = styleConfig_1.styleConfig.getWidth() + 10 + 'rem';
+        var initWidth = styleConfig_1.styleConfig.getWidth('init');
+        GetDom_1.widthSetInput.oninput = function (e) {
+            var val = e.target.value;
+            if (val === '') {
+                widthSetter.normal();
+                styleConfig_1.styleConfig.setWidth(String(initWidth));
+                GetDom_1.widthDot.style.fontSize = styleConfig_1.styleConfig.getWidth() + 10 + 'rem';
+                return;
+            }
+            if (!regExpMatch_1.RegExpr.ifNumber(val) || Number(val) > 9 || Number(val) <= 0) {
+                widthSetter.warn();
+                return;
+            }
+            styleConfig_1.styleConfig.setWidth(val);
+            GetDom_1.widthDot.style.fontSize = styleConfig_1.styleConfig.getWidth() + 10 + 'rem';
+            widthSetter.success();
+            return;
+        };
+    };
+    SetStyleFromDom.prototype.setLevels = function () {
+        var levelsSetter = new inputWarn_1.InputSet(GetDom_1.levelsSetInput);
+        GetDom_1.levelsDot.style.transform = "scale(1," + (1 / styleConfig_1.styleConfig.getLevels().length + 1) + ")";
+        var initLevels = styleConfig_1.styleConfig.getLevels('init');
+        GetDom_1.levelsSetInput.oninput = function (e) {
+            var val = e.target.value;
+            if (val === '') {
+                levelsSetter.normal();
+                styleConfig_1.styleConfig.setMatchLevels(JSON.stringify(initLevels));
+                GetDom_1.levelsDot.style.transform = "scale(1, " + (1 / styleConfig_1.styleConfig.getLevels().length + 1) + ")";
+                return;
+            }
+            if (!regExpMatch_1.RegExpr.ifNumberArray(val)) {
+                levelsSetter.warn();
+                return;
+            }
+            styleConfig_1.styleConfig.setMatchLevels(val);
+            GetDom_1.levelsDot.style.transform = "scale(1," + (1 / styleConfig_1.styleConfig.getLevels().length + 1) + ")";
+            levelsSetter.success();
+            return;
+        };
+    };
+    SetStyleFromDom.prototype.setRange = function () {
+        var rangeSetter = new inputWarn_1.InputSet(GetDom_1.rangeSetInput);
+        GetDom_1.rangeDot.style.opacity = String(1 / styleConfig_1.styleConfig.getRange().length);
+        var initrange = styleConfig_1.styleConfig.getRange('init');
+        GetDom_1.rangeSetInput.oninput = function (e) {
+            var val = e.target.value;
+            if (val === '') {
+                rangeSetter.normal();
+                styleConfig_1.styleConfig.setPixelRange(JSON.stringify(initrange));
+                GetDom_1.rangeDot.style.opacity = String(1 / styleConfig_1.styleConfig.getRange().length);
+                return;
+            }
+            if (!regExpMatch_1.RegExpr.ifNumberArray(val)) {
+                rangeSetter.warn();
+                return;
+            }
+            styleConfig_1.styleConfig.setPixelRange(val);
+            GetDom_1.rangeDot.style.opacity = String(1 / styleConfig_1.styleConfig.getRange().length);
+            rangeSetter.success();
+            return;
+        };
+    };
+    SetStyleFromDom.prototype.setVelocity = function () {
+        var velocitySetter = new inputWarn_1.InputSet(GetDom_1.velocitySetInput);
+        GetDom_1.velocityDot.style.animationDuration = 1000 / (styleConfig_1.styleConfig.getVelocity() * 111 - 110) + 's';
+        var initvelocity = styleConfig_1.styleConfig.getVelocity('init');
+        GetDom_1.velocitySetInput.oninput = function (e) {
+            var val = e.target.value;
+            if (val === '') {
+                velocitySetter.normal();
+                styleConfig_1.styleConfig.setVelocity(String(styleConfig_1.styleConfig.getVelocity('init')));
+                GetDom_1.velocityDot.style.animationDuration = 1000 / (styleConfig_1.styleConfig.getVelocity() * 111 - 110) + 's';
+                return;
+            }
+            if (!regExpMatch_1.RegExpr.ifNumber(val) || Number(val) > 10 || Number(val) < 1) {
+                velocitySetter.warn();
+                return;
+            }
+            styleConfig_1.styleConfig.setVelocity(val);
+            GetDom_1.velocityDot.style.animationDuration = 1000 / (styleConfig_1.styleConfig.getVelocity() * 111 - 110) + 's';
+            velocitySetter.success();
+            return;
+        };
+    };
+    SetStyleFromDom.prototype.run = function () {
+        this.setColor();
+        this.setWidth();
+        this.setLevels();
+        this.setRange();
+        this.setVelocity();
+    };
+    return SetStyleFromDom;
+}());
+exports.SetStyleFromDom = SetStyleFromDom;
+exports.setStyleFromDom = new SetStyleFromDom();
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+exports.__esModule = true;
+var InputSet = (function () {
+    function InputSet(input) {
+        this.inputDom = input;
+        this.initialBorderColor = input.style.borderColor;
+    }
+    InputSet.prototype.normal = function () {
+        this.inputDom.style.borderColor = this.initialBorderColor;
+        return this;
+    };
+    InputSet.prototype.warn = function () {
+        this.inputDom.style.borderColor = '#CE584A';
+        return this;
+    };
+    InputSet.prototype.success = function () {
+        this.inputDom.style.borderColor = '#588CEE';
+        return this;
+    };
+    return InputSet;
+}());
+exports.InputSet = InputSet;
+
+
+/***/ }),
+/* 12 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 9 */
+/* 13 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin

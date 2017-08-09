@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 10);
+/******/ 	return __webpack_require__(__webpack_require__.s = 14);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -113,15 +113,19 @@ exports.logBlue = function (msg) {
 /* 7 */,
 /* 8 */,
 /* 9 */,
-/* 10 */
+/* 10 */,
+/* 11 */,
+/* 12 */,
+/* 13 */,
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 exports.__esModule = true;
-var processArray_1 = __webpack_require__(11);
+var processArray_1 = __webpack_require__(15);
 var consolelog_1 = __webpack_require__(0);
-var generateExecutive_1 = __webpack_require__(13);
+var generateExecutive_1 = __webpack_require__(17);
 var _self = self;
 _self.location.reload = function (val) { console.log('worker reload'); };
 /* from purescript */
@@ -158,13 +162,13 @@ _self.onmessage = function (data) {
 
 
 /***/ }),
-/* 11 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 exports.__esModule = true;
-var conjArray_1 = __webpack_require__(12);
+var conjArray_1 = __webpack_require__(16);
 exports.transformToGray = function (arr) {
     var _arr = arr;
     for (var i = 0; i <= arr.length - 4; i += 4) {
@@ -221,7 +225,7 @@ exports.resetIntArray = function (arr, width) {
 
 
 /***/ }),
-/* 12 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -232,7 +236,8 @@ exports.conjArray = function (UintArr, width) {
     var num = 0;
     var _objArr = [];
     for (var i in UintArr) {
-        if (UintArr[i] === _tempNum) {
+        var _i = Number(i);
+        if (UintArr[_i] === _tempNum) {
             num++;
         }
         else {
@@ -241,22 +246,22 @@ exports.conjArray = function (UintArr, width) {
                 gray: _tempNum,
                 count: num || 1
             });
-            _tempNum = UintArr[i];
+            _tempNum = UintArr[_i];
             num = 1;
         }
-        if ((Number(i) + 1) && (Number(i) + 1) % width === 0) {
+        if (_i + 1 && (_i + 1) % width === 0) {
             _objArr.push({
                 lineFeed: false,
                 gray: _tempNum,
                 count: num || 1
             });
-            num = 0;
-            _tempNum = UintArr[i];
             _objArr.push({
                 lineFeed: true,
                 gray: 0,
                 count: 0
             });
+            num = 0;
+            _tempNum = UintArr[_i + 1];
         }
     }
     return _objArr;
@@ -264,7 +269,7 @@ exports.conjArray = function (UintArr, width) {
 
 
 /***/ }),
-/* 13 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

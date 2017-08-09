@@ -36,6 +36,29 @@ body {
   .btn:active {
     background: #2a6ce9; }
 
+.modal {
+  background-color: #fff;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 180rem;
+  padding: 8rem 10rem;
+  border-radius: 3rem;
+  border-bottom-right-radius: 13rem;
+  z-index: 0;
+  box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.4); }
+
+.ipt {
+  border: 1rem solid #b3b3b3;
+  transition: all .2s;
+  border-radius: 3rem;
+  padding: 5rem;
+  font-size: 14rem;
+  color: #333333;
+  outline: none; }
+  .ipt:hover {
+    border-color: #999999; }
+
 .container .canvas-container {
   background-color: #e6e6e6;
   color: #333333; }
@@ -44,12 +67,44 @@ body {
     text-align: center; }
   .container .canvas-container .btn-container {
     text-align: center; }
-    .container .canvas-container .btn-container .btn.circle {
-      margin-left: 3rem; }
+    .container .canvas-container .btn-container .btns-con {
+      display: inline-block;
+      position: relative; }
+      .container .canvas-container .btn-container .btns-con .btn.circle {
+        margin-left: 3rem;
+        z-index: 1;
+        position: relative; }
+        .container .canvas-container .btn-container .btns-con .btn.circle + .modal {
+          transition: all .2s;
+          visibility: hidden;
+          opacity: 0; }
+          .container .canvas-container .btn-container .btns-con .btn.circle + .modal:hover {
+            visibility: visible;
+            opacity: 1; }
+        .container .canvas-container .btn-container .btns-con .btn.circle:hover + .modal {
+          visibility: visible;
+          opacity: 1; }
     .container .canvas-container .btn-container .input-label {
       display: inline-block; }
   .container .canvas-container .canvas {
     background-color: white; }
+
+.set-label {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 3rem 5rem; }
+  .set-label.velocity-set #dot-velocity {
+    animation: velocityRotate 1s linear infinite; }
+  .set-label .ipt {
+    margin-left: 5rem;
+    width: 120rem; }
+
+@keyframes velocityRotate {
+  from {
+    transform: rotate(0deg); }
+  to {
+    transform: rotate(360deg); } }
 @charset "UTF-8";
 /*!
  *  Font Awesome 4.7.0 by @davegandy - http://fontawesome.io - @fontawesome
