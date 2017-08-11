@@ -2,6 +2,8 @@ import { getPixelsFromCanvas } from './getPixelsFromCanvas';
 import { $worker, Worker_ } from '../utils/Worker';
 import { logBlue, logGreen, logRed } from '../utils/consolelog';
 import { drawLines } from './drawLines';
+import { sketchBtn } from './GetDom';
+import { addClass, removeClass } from '../utils/procssCssName';
 export const drawCanvas = (ctx: CanvasRenderingContext2D, imgBase64: string) => {
   const img = new Image();
   img.onload = (e: Event) => {
@@ -42,18 +44,20 @@ export const sketchPics = (
   let rawImgData = getPixelsFromCanvas(rawCtx);
   console.log('sketch imgdata', rawImgData);
   newCtx.clearRect(0, 0, newCtx.canvas.width, newCtx.canvas.height);
-  if (worker) {
-    worker.end();
-  }
+
+  addClass(sketchBtn, 'disabled');
   worker = $worker({
     do: 'js/img_calc.js',
     message: (data: ServiceWorkerMessageEvent) => {
       console.log('get worker message', data.data);
       let newExe = data.data.exeCom.reverse().map(val => val.concat([{
         action: "ORIGIN", distance: 0, direct: "UP"
-      }])).reduce((a, b) => a.concat(b));
+      }])).reduce((a, b) => a.concat(b)).concat([{ action: 'END', distance: 0, direct: 'UP' }]);
       console.log('new exe', newExe);
-      drawLines(newCtx, newExe, { width: lineWidth, color: lineColor }, [.5, .5], velocity);
+      drawLines(newCtx, newExe, { width: lineWidth, color: lineColor }, [.5, .5], velocity, () => {
+        logGreen('drawing finished');
+        removeClass(sketchBtn, 'disabled');
+      });
       worker.end();
     },
     error: err => {

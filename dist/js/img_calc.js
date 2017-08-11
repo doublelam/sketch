@@ -60,11 +60,12 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 14);
+/******/ 	return __webpack_require__(__webpack_require__.s = 15);
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */
+/******/ ({
+
+/***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -104,28 +105,16 @@ exports.logBlue = function (msg) {
 
 
 /***/ }),
-/* 1 */,
-/* 2 */,
-/* 3 */,
-/* 4 */,
-/* 5 */,
-/* 6 */,
-/* 7 */,
-/* 8 */,
-/* 9 */,
-/* 10 */,
-/* 11 */,
-/* 12 */,
-/* 13 */,
-/* 14 */
+
+/***/ 15:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 exports.__esModule = true;
-var processArray_1 = __webpack_require__(15);
+var processArray_1 = __webpack_require__(16);
 var consolelog_1 = __webpack_require__(0);
-var generateExecutive_1 = __webpack_require__(17);
+var generateExecutive_1 = __webpack_require__(18);
 var _self = self;
 _self.location.reload = function (val) { console.log('worker reload'); };
 /* from purescript */
@@ -162,13 +151,14 @@ _self.onmessage = function (data) {
 
 
 /***/ }),
-/* 15 */
+
+/***/ 16:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 exports.__esModule = true;
-var conjArray_1 = __webpack_require__(16);
+var conjArray_1 = __webpack_require__(17);
 exports.transformToGray = function (arr) {
     var _arr = arr;
     for (var i = 0; i <= arr.length - 4; i += 4) {
@@ -225,7 +215,8 @@ exports.resetIntArray = function (arr, width) {
 
 
 /***/ }),
-/* 16 */
+
+/***/ 17:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -269,7 +260,8 @@ exports.conjArray = function (UintArr, width) {
 
 
 /***/ }),
-/* 17 */
+
+/***/ 18:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -317,5 +309,6 @@ exports.generateExecutive = function (exeArr, gap, width, grayMatch, fillChar) {
 
 
 /***/ })
-/******/ ]);
+
+/******/ });
 //# sourceMappingURL=img_calc.js.map

@@ -1,5 +1,5 @@
 import { logBlue, logGreen, logRed } from '../utils/consolelog';
-export type Action = 'DRAW' | 'MOVE' | 'LINE_FEED' | 'ORIGIN'
+export type Action = 'DRAW' | 'MOVE' | 'LINE_FEED' | 'ORIGIN' | 'END'
 
 export type DrawExe = {
   action: Action,
@@ -32,26 +32,32 @@ export const drawLines = (
     color: '#000'
   },
   initPosition: [number, number] = [.5, .5],
-  velocity: number = 1.89
+  velocity: number = 1.89,
+  callback: Function = () => logBlue('DRAW FINISHED')
 ): CanvasRenderingContext2D => {
   let timeoutTick: number;
   let _point: [number, number] = [initPosition[0], initPosition[1]];
-  console.log('init', _point)
+  console.log('init', _point, 'color', linStyle.color)
   ctx.strokeStyle = linStyle.color;
   ctx.lineWidth = linStyle.width;
   clearTimeout(timeoutTick);
   ctx.beginPath();
   ctx.moveTo(_point[0], _point[1]);
+  ctx.stroke();
   const loopExe = (val: DrawExe, i) => {
-    clearTimeout(timeoutTick);
+    if (val.action === 'END'){
+      callback();
+      return;
+    }
     if (val.action === 'ORIGIN') {
       logBlue('origin');
+      ctx.beginPath();
       ctx.moveTo(initPosition[0], initPosition[1]);
       _point = [initPosition[0], initPosition[1]];
       ctx.stroke();
-      ctx.closePath();
       return;
     }
+
     _point = [
       _point[0] + DIR_MAP[val.direct][0] * val.distance,
       _point[1] + DIR_MAP[val.direct][1] * val.distance
@@ -59,18 +65,22 @@ export const drawLines = (
     let command = ACTION_MAP[val.action];
     let xAxis = _point[0];
     let yAxis = _point[1];
+    if (command === 'moveTo'){
+      ctx.beginPath();
+    }
     ctx[command](xAxis, yAxis);
     ctx.stroke();
-    ctx.closePath();
+    return;
+    // ctx.closePath();
   }
   let speed: number = 1000 / (velocity * 111 - 110);
   const timeout = (i: number, val: DrawExe) => {
     timeoutTick = setTimeout(() => {
-      loopExe(opts[i], i)
+      loopExe(opts[i], i);
     }, i * speed);
   }
   for (let i in opts) {
-    timeout(Number(i), opts[i])
+    timeout(Number(i), opts[i]);
   }
   return ctx;
 }

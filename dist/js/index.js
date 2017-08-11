@@ -156,6 +156,8 @@ var getPixelsFromCanvas_1 = __webpack_require__(7);
 var Worker_1 = __webpack_require__(8);
 var consolelog_1 = __webpack_require__(0);
 var drawLines_1 = __webpack_require__(9);
+var GetDom_1 = __webpack_require__(1);
+var procssCssName_1 = __webpack_require__(10);
 exports.drawCanvas = function (ctx, imgBase64) {
     var img = new Image();
     img.onload = function (e) {
@@ -195,18 +197,19 @@ exports.sketchPics = function (rawCtx, newCtx, lineWidth, lineColor, levels, ran
     var rawImgData = getPixelsFromCanvas_1.getPixelsFromCanvas(rawCtx);
     console.log('sketch imgdata', rawImgData);
     newCtx.clearRect(0, 0, newCtx.canvas.width, newCtx.canvas.height);
-    if (worker) {
-        worker.end();
-    }
+    procssCssName_1.addClass(GetDom_1.sketchBtn, 'disabled');
     worker = Worker_1.$worker({
         "do": 'js/img_calc.js',
         message: function (data) {
             console.log('get worker message', data.data);
             var newExe = data.data.exeCom.reverse().map(function (val) { return val.concat([{
                     action: "ORIGIN", distance: 0, direct: "UP"
-                }]); }).reduce(function (a, b) { return a.concat(b); });
+                }]); }).reduce(function (a, b) { return a.concat(b); }).concat([{ action: 'END', distance: 0, direct: 'UP' }]);
             console.log('new exe', newExe);
-            drawLines_1.drawLines(newCtx, newExe, { width: lineWidth, color: lineColor }, [.5, .5], velocity);
+            drawLines_1.drawLines(newCtx, newExe, { width: lineWidth, color: lineColor }, [.5, .5], velocity, function () {
+                consolelog_1.logGreen('drawing finished');
+                procssCssName_1.removeClass(GetDom_1.sketchBtn, 'disabled');
+            });
             worker.end();
         },
         error: function (err) {
@@ -349,8 +352,8 @@ var GetDom_1 = __webpack_require__(1);
 var Events_1 = __webpack_require__(6);
 var domOperate_1 = __webpack_require__(2);
 /* css resource */
-__webpack_require__(12);
 __webpack_require__(13);
+__webpack_require__(14);
 /* ----------- */
 /* require from purescript */
 /* ---------- */
@@ -382,7 +385,7 @@ main.run();
 exports.__esModule = true;
 var GetDom_1 = __webpack_require__(1);
 var domOperate_1 = __webpack_require__(2);
-var setFromDom_1 = __webpack_require__(10);
+var setFromDom_1 = __webpack_require__(11);
 var styleConfig_1 = __webpack_require__(3);
 var Events = (function () {
     function Events() {
@@ -506,29 +509,34 @@ var ACTION_MAP = {
     'DRAW': 'lineTo',
     'MOVE': 'moveTo'
 };
-exports.drawLines = function (ctx, opts, linStyle, initPosition, velocity) {
+exports.drawLines = function (ctx, opts, linStyle, initPosition, velocity, callback) {
     if (linStyle === void 0) { linStyle = {
         width: .5,
         color: '#000'
     }; }
     if (initPosition === void 0) { initPosition = [.5, .5]; }
     if (velocity === void 0) { velocity = 1.89; }
+    if (callback === void 0) { callback = function () { return consolelog_1.logBlue('DRAW FINISHED'); }; }
     var timeoutTick;
     var _point = [initPosition[0], initPosition[1]];
-    console.log('init', _point);
+    console.log('init', _point, 'color', linStyle.color);
     ctx.strokeStyle = linStyle.color;
     ctx.lineWidth = linStyle.width;
     clearTimeout(timeoutTick);
     ctx.beginPath();
     ctx.moveTo(_point[0], _point[1]);
+    ctx.stroke();
     var loopExe = function (val, i) {
-        clearTimeout(timeoutTick);
+        if (val.action === 'END') {
+            callback();
+            return;
+        }
         if (val.action === 'ORIGIN') {
             consolelog_1.logBlue('origin');
+            ctx.beginPath();
             ctx.moveTo(initPosition[0], initPosition[1]);
             _point = [initPosition[0], initPosition[1]];
             ctx.stroke();
-            ctx.closePath();
             return;
         }
         _point = [
@@ -538,9 +546,13 @@ exports.drawLines = function (ctx, opts, linStyle, initPosition, velocity) {
         var command = ACTION_MAP[val.action];
         var xAxis = _point[0];
         var yAxis = _point[1];
+        if (command === 'moveTo') {
+            ctx.beginPath();
+        }
         ctx[command](xAxis, yAxis);
         ctx.stroke();
-        ctx.closePath();
+        return;
+        // ctx.closePath();
     };
     var speed = 1000 / (velocity * 111 - 110);
     var timeout = function (i, val) {
@@ -562,10 +574,43 @@ exports.drawLines = function (ctx, opts, linStyle, initPosition, velocity) {
 "use strict";
 
 exports.__esModule = true;
+exports.getRidOfSpace = function (str) {
+    return str.replace(/^\s*|\s(?=\s)|\s*$/g, '');
+};
+exports.addClass = function (ele, cls) {
+    var eleCls = ele.className;
+    var clsArr = typeof cls === 'string' ? cls.split(/\s*,\s*|\s+/g) : cls;
+    for (var _i = 0, clsArr_1 = clsArr; _i < clsArr_1.length; _i++) {
+        var val = clsArr_1[_i];
+        if (new RegExp(val, 'g').test(eleCls)) {
+            continue;
+        }
+        eleCls += " " + val;
+    }
+    ele.className = exports.getRidOfSpace(eleCls);
+    return ele;
+};
+exports.removeClass = function (ele, cls) {
+    var eleCls = ele.className;
+    var clsArr = typeof cls === 'string' ? cls.split(/\s*,\s*|\s+/g) : cls;
+    var regExp = new RegExp(clsArr.join('|'), 'g');
+    var newCls = eleCls.replace(regExp, '');
+    ele.className = exports.getRidOfSpace(newCls);
+    return ele;
+};
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+exports.__esModule = true;
 var GetDom_1 = __webpack_require__(1);
 var styleConfig_1 = __webpack_require__(3);
 var regExpMatch_1 = __webpack_require__(4);
-var inputWarn_1 = __webpack_require__(11);
+var inputWarn_1 = __webpack_require__(12);
 var SetStyleFromDom = (function () {
     function SetStyleFromDom() {
     }
@@ -693,7 +738,7 @@ exports.setStyleFromDom = new SetStyleFromDom();
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -722,13 +767,13 @@ exports.InputSet = InputSet;
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin

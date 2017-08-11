@@ -9,6 +9,12 @@
   color: $dark-txt
   user-select: none
   box-shadow: $norm-shadow
+  &.disabled
+    background-color: gray(2)
+    color: gray(6)
+    box-shadow: none
+    cursor: wait
+    pointer-events: none
   &.circle
     display: inline-block
     border-radius: 1.3rem

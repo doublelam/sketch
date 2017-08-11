@@ -28,6 +28,12 @@ body {
   color: #e6e6e6;
   user-select: none;
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); }
+  .btn.disabled {
+    background-color: #cccccc;
+    color: #666666;
+    box-shadow: none;
+    cursor: wait;
+    pointer-events: none; }
   .btn.circle {
     display: inline-block;
     border-radius: 1.3rem;
