@@ -15,7 +15,7 @@ export const addClass = (ele: HTMLElement, cls: string | string[]): HTMLElement 
   return ele;
 }
 
-export const removeClass = (ele: HTMLElement, cls: string | string[]) => {
+export const removeClass = (ele: HTMLElement, cls: string | string[]): HTMLElement => {
   let eleCls = ele.className;
   let clsArr: string[] = typeof cls === 'string' ? cls.split(/\s*,\s*|\s+/g) : cls;
   let regExp = new RegExp(clsArr.join('|'), 'g');
